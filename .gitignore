@@ -6,7 +6,9 @@ __pycache__/
 
 ### ENV
 .env
+.venv
 venv
+env
 
 
 ### VSCODE
@@ -22,4 +24,5 @@ venv
 
 # Built Visual Studio Code Extensions
 *.vsix
+
 
