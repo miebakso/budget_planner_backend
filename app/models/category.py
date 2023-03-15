@@ -10,7 +10,7 @@ class BaseCategory(BaseModel):
             raise ValueError("Category name must not be longer than 20")
         return name
 
-class Category(BaseCategory):
+class CategoryModel(BaseCategory):
     id: int 
 
 class CategoryCreate(BaseCategory):
