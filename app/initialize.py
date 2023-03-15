@@ -1,7 +1,7 @@
 # This script for intializing the database tables
 
 from schema import Base
-import dependencies
+import dependencies 
 
 from fastapi import Depends
 
