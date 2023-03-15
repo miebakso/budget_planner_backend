@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, validator
 from typing import Optional
 
 class BaseCategory(BaseModel):
@@ -9,9 +9,6 @@ class BaseCategory(BaseModel):
         if len(name) > 20:
             raise ValueError("Category name must not be longer than 20")
         return name
-
-class CategoryModel(BaseCategory):
-    id: int 
 
 class CategoryCreate(BaseCategory):
     pass

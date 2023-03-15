@@ -22,7 +22,7 @@ async def get_category(category_id: int, session = Depends(get_db_connection)):
     return session.query(Category).filter(Category.id == category_id).first()
 
 # Create new category, all category is converted to lower case.
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/")
 async def add_categories(category: CategoryCreate, session = Depends(get_db_connection)):
     db_category = Category(name = category.name.lower())
     # Handle duplicate values
@@ -36,7 +36,7 @@ async def add_categories(category: CategoryCreate, session = Depends(get_db_conn
 
 # Update a category by their ID
 @router.put("/{category_id}")
-async def add_categories(category_id:int, category: CategoryUpdate, session = Depends(get_db_connection)):
+async def update_category(category_id:int, category: CategoryUpdate, session = Depends(get_db_connection)):
     db_category =session.query(Category).filter(Category.id == category_id).first()
     if not db_category:
         raise HTTPException(status_code=404, detail="Category Not Found")
@@ -48,7 +48,7 @@ async def add_categories(category_id:int, category: CategoryUpdate, session = De
 
 # Removed a category by their ID
 @router.delete("/{category_id}")
-async def add_categories(category_id:int, session = Depends(get_db_connection)):
+async def remove_category(category_id:int, session = Depends(get_db_connection)):
     db_category = session.query(Category).filter(Category.id == category_id).first()
     if not db_category:
         raise HTTPException(status_code=404, detail="Category Not Found")
