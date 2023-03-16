@@ -1,27 +1,34 @@
 from operator import and_
 from fastapi import APIRouter, Depends, HTTPException, Body
-from app.dependencies import get_db_connection
-from app.models.transaction import TransactionCreate, TransactionUpdate, TransationGetRequest
+from app.dependencies import get_db_connection, engine
+from app.models.transaction import TransactionCreate, TransactionUpdate, TransationsRequest
 from app.schema import Category, Transaction
-from typing import Union, List
-from datetime import datetime
 from sqlalchemy import and_
+from sqlalchemy.dialects import mysql
+from sqlalchemy.orm import joinedload
+
 
 router = APIRouter(
     prefix="/transations",
     tags=["transations"],
 )
 
-# Return all the categories order by their ID
+# Test functions
 @router.get("/")
-async def get_transations(
-        t_request: TransationGetRequest,
-        session= Depends(get_db_connection)
-    ):
-    query = session.query(Transaction).join(Category)
+async def get_transations(session= Depends(get_db_connection)):
+    q = session.query(Transaction).join(Category, Transaction.category_id == Category.id).options(joinedload(Transaction.category))
+    print(str(q.statement.compile(dialect=mysql.dialect())))
+    return q.all()
+
+   
+
+# Return all the categories order by their ID
+@router.post("/search")
+async def search(t_request: TransationsRequest, session= Depends(get_db_connection)):
+    query = session.query(Transaction).join(Category, Transaction.category_id == Category.id)
     
     # Filter categories if specified
-    if t_request.categor_id:
+    if t_request.category_ids:
         query = query.filter(Transaction.category_id.in_(tuple(t_request.category_ids)))
     
     # transations order

@@ -26,6 +26,7 @@ class Transaction(Base):
     total = Column(Float)
     notes = Column(String(200), nullable=True)
     category_id = Column(Integer, ForeignKey("categories.id"))
+    category = relationship("Category", lazy="joined")
     
     
 
