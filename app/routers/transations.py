@@ -9,15 +9,15 @@ from sqlalchemy.orm import joinedload
 
 
 router = APIRouter(
-    prefix="/transations",
-    tags=["transations"],
+    prefix="/transactions",
+    tags=["transactions"],
 )
 
 # Test functions
 @router.get("/")
-async def get_transations(session= Depends(get_db_connection)):
+async def get_transactions(session= Depends(get_db_connection)):
     q = session.query(Transaction).join(Category, Transaction.category_id == Category.id).options(joinedload(Transaction.category))
-    print(str(q.statement.compile(dialect=mysql.dialect())))
+    # print(str(q.statement.compile(dialect=mysql.dialect())))
     return q.all()
 
    
@@ -25,7 +25,7 @@ async def get_transations(session= Depends(get_db_connection)):
 # Return all the categories order by their ID
 @router.post("/search")
 async def search(t_request: TransationsRequest, session= Depends(get_db_connection)):
-    query = session.query(Transaction).join(Category, Transaction.category_id == Category.id)
+    query = session.query(Transaction).join(Category, Transaction.category_id == Category.id).options(joinedload(Transaction.category))
     
     # Filter categories if specified
     if t_request.category_ids:
@@ -56,12 +56,12 @@ async def search(t_request: TransationsRequest, session= Depends(get_db_connecti
     return query.all()
 
 # Return a specific trasantion by their ID
-@router.get("/{trascation_id}")
-async def get_transation(trascation_id: int, session = Depends(get_db_connection)):
-    return session.query(Transaction).filter(Transaction.id == trascation_id).join(Category).first()
+@router.get("/{transcaction_id}")
+async def get_transaction_by_id(transcaction_id: int, session = Depends(get_db_connection)):
+    return session.query(Transaction).filter(Transaction.id == transcaction_id).join(Category).first()
     
 @router.post("/")
-async def add_transation(transaction: TransactionCreate, session = Depends(get_db_connection)):
+async def add_transaction(transaction: TransactionCreate, session = Depends(get_db_connection)):
     db_transactions = Transaction()
     transation_data = transaction.dict()
     for key, value in transation_data.items():
@@ -73,8 +73,8 @@ async def add_transation(transaction: TransactionCreate, session = Depends(get_d
     return db_transactions
 
 # Update a category by their ID
-@router.put("/{transation_id}")
-async def update_transation(transation_id:int, transaction: TransactionUpdate, session = Depends(get_db_connection)):
+@router.put("/{transaction_id}")
+async def update_transaction_by_id(transation_id:int, transaction: TransactionUpdate, session = Depends(get_db_connection)):
     db_transactions = session.query(Transaction).filter(Transaction.id == transation_id).first()
     if not db_transactions:
         raise HTTPException(status_code=404, detail="Transaction Not Found")
@@ -87,8 +87,8 @@ async def update_transation(transation_id:int, transaction: TransactionUpdate, s
     return db_transactions
 
 # Removed a category by their ID
-@router.delete("/{transation_id}")
-async def remove_category(transation_id:int, session = Depends(get_db_connection)):
+@router.delete("/{transaction_id}")
+async def remove_transaction(transation_id:int, session = Depends(get_db_connection)):
     db_transaction = session.query(Transaction).filter(Transaction.id == transation_id).first()
     if not db_transaction:
         raise HTTPException(status_code=404, detail="Transation you're trying to removed not found")
