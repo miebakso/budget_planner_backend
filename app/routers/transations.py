@@ -74,8 +74,8 @@ async def add_transaction(transaction: TransactionCreate, session = Depends(get_
 
 # Update a category by their ID
 @router.put("/{transaction_id}")
-async def update_transaction_by_id(transation_id:int, transaction: TransactionUpdate, session = Depends(get_db_connection)):
-    db_transactions = session.query(Transaction).filter(Transaction.id == transation_id).first()
+async def update_transaction_by_id(transaction_id:int, transaction: TransactionUpdate, session = Depends(get_db_connection)):
+    db_transactions = session.query(Transaction).filter(Transaction.id == transaction_id).first()
     if not db_transactions:
         raise HTTPException(status_code=404, detail="Transaction Not Found")
     transation_data = transaction.dict()
@@ -88,8 +88,8 @@ async def update_transaction_by_id(transation_id:int, transaction: TransactionUp
 
 # Removed a category by their ID
 @router.delete("/{transaction_id}")
-async def remove_transaction(transation_id:int, session = Depends(get_db_connection)):
-    db_transaction = session.query(Transaction).filter(Transaction.id == transation_id).first()
+async def remove_transaction(transaction_id:int, session = Depends(get_db_connection)):
+    db_transaction = session.query(Transaction).filter(Transaction.id == transaction_id).first()
     if not db_transaction:
         raise HTTPException(status_code=404, detail="Transation you're trying to removed not found")
     session.delete(db_transaction)
