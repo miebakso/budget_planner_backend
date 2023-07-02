@@ -46,6 +46,15 @@ async def search(t_request: TransationsRequest, session= Depends(get_db_connecti
         if t_request.end_date is not None:
             query = query.filter(Transaction.date <= t_request.end_date)
     
+    # rearch result 
+    search_result = {
+        'total_row': query.count(),
+        'current_page': t_request.page,
+        'page_size': t_request.page_size,
+        'start_date': t_request.start_date,
+        'end_date': t_request.end_date
+    }
+    
     # filter offset if specified
     if t_request.page is not None:
         query = query.offset(t_request.page*t_request.page_size - t_request.page_size)
@@ -53,7 +62,12 @@ async def search(t_request: TransationsRequest, session= Depends(get_db_connecti
     # filter page size if not specified
     if t_request.page_size is not None:
         query = query.limit(t_request.page_size)
-    return query.all()
+
+    # add the transation rows into variable search_result
+    search_result['transations'] = query.all()
+    
+    # return query.all()
+    return search_result
 
 # Return a specific trasantion by their ID
 @router.get("/{transcaction_id}")
